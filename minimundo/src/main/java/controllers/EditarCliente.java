@@ -25,7 +25,7 @@ public class EditarCliente extends HttpServlet {
 		Connection con = new ConnectionController().ConnectToDatabase();
 		DatabaseController db = new DatabaseController();
 		
-		Cliente clienteGet = (Cliente)db.SelectFromId(con, EntidadeTipo.CLIENTE, clientId);
+		Cliente clienteGet = (Cliente)db.SelectFromParam(con, EntidadeTipo.CLIENTE, "id", String.valueOf(clientId));
 		clienteGet.setId(clientId);
 				
 		request.setAttribute("cliente", clienteGet);
@@ -57,7 +57,7 @@ public class EditarCliente extends HttpServlet {
 			DatabaseController db = new DatabaseController();
 			Connection con = new ConnectionController().ConnectToDatabase();
 			
-			Cliente oldCliente = (Cliente)db.SelectFromId(con, EntidadeTipo.CLIENTE, idClient);
+			Cliente oldCliente = (Cliente)db.SelectFromParam(con, EntidadeTipo.CLIENTE, "id", String.valueOf(idClient));
 			
 			Endereco enderecoUpdate = new Endereco(logradouro, numero, bairro, cidade, uf, pais, cep, complemento, pontoDeReferencia);
 			enderecoUpdate.setId(oldCliente.getEndereco().getId());

@@ -28,7 +28,7 @@
 			<th>Editar</th>
 			<th>Deletar</th>
 		</tr>
-		<c:forEach items="${listaClientes}" var="cliente">
+		<c:forEach items="${listaClientes}" var="cliente" varStatus="i">
 			<tr>
 				<td>${cliente.razaoSocial}</td>
 				<td>${cliente.cpfCnpj}</td>
@@ -37,7 +37,7 @@
 				<td>${cliente.tipoPessoa}</td>
 				<td>${cliente.tipoCliente}</td>
 				<td><a href = "editarCliente?id=${cliente.id}">Editar Cliente</a></td>
-				<td><a href = "deletar?id=${cliente.id}&table=CLIENTE">Deletar Cliente</a></td>
+				<td><a href = "deletar?id=${cliente.id}&id2=${listaEndereco.get(i.index).getId()}&table=CLIENTE">Deletar Cliente</a></td>
 			</tr>
 		</c:forEach>
 	</table>

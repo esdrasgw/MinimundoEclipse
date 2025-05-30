@@ -22,7 +22,7 @@ public class EditarProduto extends HttpServlet {
 		Connection con = new ConnectionController().ConnectToDatabase();
 		DatabaseController db = new DatabaseController();
 		
-		Produto produtoGet = (Produto)db.SelectFromId(con, EntidadeTipo.PRODUTO, productId);
+		Produto produtoGet = (Produto)db.SelectFromParam(con, EntidadeTipo.PRODUTO, "id", String.valueOf(productId));
 		produtoGet.setId(productId);
 		
 		request.setAttribute("produto", produtoGet);

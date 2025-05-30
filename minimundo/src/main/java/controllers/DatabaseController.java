@@ -28,7 +28,7 @@ public class DatabaseController {
 			String razaoSocial = rs.getString("razaoSocial");
 			String cpfCnpj = rs.getString("cpfCnpj");
 			String telefone = rs.getString("telefone"); 
-			Endereco endereco = (Endereco)SelectFromId(con, EntidadeTipo.ENDERECO, rs.getInt("id")); 
+			Endereco endereco = (Endereco)SelectFromParam(con, EntidadeTipo.ENDERECO, "id", String.valueOf(rs.getInt("id"))); 
 			String nomeFantasia = rs.getString("nomeFantasia");
 			TipoCliente tipoCliente = TipoCliente.valueOf(rs.getString("tipoCliente")); 
 			TipoPessoa tipoPessoa = TipoPessoa.valueOf(rs.getString("tipoPessoa"));
@@ -64,15 +64,23 @@ public class DatabaseController {
 			
 			return enderecoObj;
 			
+		case ENTREGA:
+			
+			cliente = (Cliente)SelectFromParam(con, EntidadeTipo.CLIENTE, "id", String.valueOf(rs.getInt(1)));
+			produto = (Produto)SelectFromParam(con, EntidadeTipo.PRODUTO, "id", String.valueOf(rs.getInt(1)));
+			
+			Entrega entregaObj = new Entrega(cliente, produto);
+			return entregaObj;
+			
 		default: return null;	
 		
 		}
 	}
 	
-	public Entidade SelectFromId(Connection con, EntidadeTipo tableName, int id)
+	public Entidade SelectFromParam(Connection con, EntidadeTipo tableName, String paramName, String param)
 	{		
 		try {
-			String query = "SELECT * FROM " + tableName + " WHERE ID = " + id;
+			String query = "SELECT * FROM " + tableName + " WHERE " + paramName + " = " + "'" + param + "'";
 			Statement statement = con.createStatement();
 			
 			ResultSet rs = statement.executeQuery(query);
@@ -163,13 +171,16 @@ public class DatabaseController {
         		
         		statement.execute();
         		break;
+        		
+        	case ENTREGA:
+        		break;
         	}
         } catch (Exception e) {
             System.out.println(e);
         }
     }
     
-    public void Insert(Connection con, Entidade insertable, EntidadeTipo insertableType)
+    public void Insert(Connection con, Entidade insertable, EntidadeTipo insertableType) throws Exception
     {
     	try {
     		String query = null;
@@ -257,15 +268,28 @@ public class DatabaseController {
     			
     			if (entrega.getCliente().getTipoCliente() == TipoCliente.DESTINATARIO)
     			{
-        			query = "INSERT INTO Entrega(destinatario, produto, enderecoEntrega) VALUES (?, ?, ?) RETURNING ID;";
+    				query = "UPDATE Cliente SET tipoCliente = ? WHERE id = ?;";
+    				statement = con.prepareStatement(query);
+    				statement.setObject(1, TipoCliente.DESTINATARIO, java.sql.Types.OTHER);
+    				statement.setInt(2, entrega.getCliente().getId());
+    				
+        			query = "INSERT INTO Entrega(destinatario, produto, enderecoEntrega) VALUES (?, ?, ?) RETURNING id;";
         			statement = con.prepareStatement(query);
         			statement.setString(1, entrega.getCliente().getCpfCnpj());
         			statement.setInt(2, entrega.getProduto().getIdProduto());
         			statement.setInt(3, entrega.getCliente().getEndereco().getId());
+        			
     			}
     			else 
     			{
-    				query = "INSERT INTO Entrega(remetente, produto) VALUES (?, ?) RETURNING ID;";
+    				query = "UPDATE Cliente SET tipoCliente = ? WHERE id = ?;";
+    				statement = con.prepareStatement(query);
+    				statement.setObject(1, TipoCliente.REMETENTE, java.sql.Types.OTHER);
+    				statement.setInt(2, entrega.getCliente().getId());
+    				
+    				statement.execute();
+    				
+    				query = "INSERT INTO Entrega(remetente, produto) VALUES ('?', ?) RETURNING id;";
     				statement = con.prepareStatement(query);
         			statement.setString(1, entrega.getCliente().getCpfCnpj());
         			statement.setInt(2, entrega.getProduto().getIdProduto());
@@ -283,6 +307,8 @@ public class DatabaseController {
          	
     	} catch (Exception e) {
     		System.out.println(e);
+    		
+    		throw e;
     	}
 		return;
     }
@@ -299,23 +325,5 @@ public class DatabaseController {
     	} catch (Exception e) {
     		System.out.println(e);
     	}
-    }
-    
-    public Entidade SelectViaParameter(Connection con, EntidadeTipo entidadeTipo, String paramName, String param)
-    {
-    	try {
-    		String query = "SELECT * FROM " + entidadeTipo + " WHERE " + paramName + " = " + param;
-    		PreparedStatement statement = con.prepareStatement(query);
-    		
-    		statement.execute();
-    		ResultSet rs = statement.getResultSet();
-    		while (rs.next())
-			{
-				return CreateInsertable(con, entidadeTipo, rs);
-			}
-    	} catch (Exception e) {
-    		System.out.println(e);
-    	}
-    	return null;
     }
 }

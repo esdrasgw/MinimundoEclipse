@@ -18,6 +18,7 @@ public class Deletar extends HttpServlet {
        
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int insertableId = Integer.valueOf(request.getParameter("id"));
+		int enderecoId = Integer.valueOf(request.getParameter("id2"));
 		EntidadeTipo tableName = EntidadeTipo.valueOf(request.getParameter("table"));
 		
 		Connection con = new ConnectionController().ConnectToDatabase();
@@ -25,9 +26,8 @@ public class Deletar extends HttpServlet {
 		
 		if (tableName == EntidadeTipo.CLIENTE)
 		{
-			Cliente ent = (Cliente)db.SelectFromId(con, tableName, insertableId);
 			db.Delete(con, tableName, insertableId);
-			db.Delete(con, EntidadeTipo.ENDERECO, ent.getEndereco().getId());
+			db.Delete(con, EntidadeTipo.ENDERECO, enderecoId);
 			response.sendRedirect("listaClientes");
 		}
 		
