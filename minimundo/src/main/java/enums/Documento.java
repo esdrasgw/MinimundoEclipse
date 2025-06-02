@@ -1,4 +1,4 @@
-package models.Client;
+package enums;
 
 public enum Documento {
 	CPF,

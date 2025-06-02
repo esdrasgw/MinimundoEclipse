@@ -6,15 +6,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import enums.EntidadeTipo;
+import enums.TipoCliente;
+import enums.TipoPessoa;
+import models.Cliente;
+import models.Endereco;
 import models.Entidade;
-import models.EntidadeTipo;
-import models.Client.Cliente;
-import models.Client.Documento;
-import models.Client.TipoCliente;
-import models.Client.TipoPessoa;
-import models.Endereco.Endereco;
-import models.Entrega.Entrega;
-import models.Product.Produto;
+import models.Entrega;
+import models.Produto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -64,14 +63,17 @@ public class DatabaseController {
 			
 			return enderecoObj;
 			
-		case ENTREGA:
-			
-			cliente = (Cliente)SelectFromParam(con, EntidadeTipo.CLIENTE, "id", String.valueOf(rs.getInt(1)));
-			produto = (Produto)SelectFromParam(con, EntidadeTipo.PRODUTO, "id", String.valueOf(rs.getInt(1)));
-			
-			Entrega entregaObj = new Entrega(cliente, produto);
-			return entregaObj;
-			
+			case ENTREGA:
+		    Cliente destinatario = (Cliente) SelectFromParam(con, EntidadeTipo.CLIENTE, "cpfCnpj", rs.getString("destinatario"));
+		    Cliente remetente = (Cliente) SelectFromParam(con, EntidadeTipo.CLIENTE, "cpfCnpj", rs.getString("remetente"));
+		    produto = (Produto) SelectFromParam(con, EntidadeTipo.PRODUTO, "id", String.valueOf(rs.getInt("produto")));
+		    endereco = (Endereco) SelectFromParam(con, EntidadeTipo.ENDERECO, "id", rs.getString("enderecoEntrega"));
+
+		    Entrega entregaObj = new Entrega(destinatario, remetente, produto, endereco);
+		    entregaObj.setId(rs.getInt("id"));
+
+		    return entregaObj;
+
 		default: return null;	
 		
 		}
@@ -173,6 +175,17 @@ public class DatabaseController {
         		break;
         		
         	case ENTREGA:
+        		query = "UPDATE Entrega SET destinatario = ?, remetente = ?, produto = ?, enderecoEntrega = ? WHERE id = ?;";
+        		Entrega entrega = (Entrega)entidade;
+        		statement = con.prepareStatement(query);
+        		
+        		statement.setString(1, entrega.getDestinatario().getCpfCnpj());
+        		statement.setString(2, entrega.getRemetente().getCpfCnpj());
+        		statement.setInt(3, entrega.getProduto().getIdProduto());
+        		statement.setInt(4, entrega.getEnderecoEntrega().getId());
+        		statement.setInt(5, entrega.getId());
+        		
+        		statement.execute();
         		break;
         	}
         } catch (Exception e) {
@@ -263,52 +276,26 @@ public class DatabaseController {
         		break;
         		
     		case ENTREGA:
-    			
     			Entrega entrega = (Entrega)insertable;
+    			query = "INSERT INTO Entrega (destinatario, remetente, produto, enderecoEntrega) VALUES (?, ?, ?, ?) RETURNING id;";
     			
-    			if (entrega.getCliente().getTipoCliente() == TipoCliente.DESTINATARIO)
-    			{
-    				query = "UPDATE Cliente SET tipoCliente = ? WHERE id = ?;";
-    				statement = con.prepareStatement(query);
-    				statement.setObject(1, TipoCliente.DESTINATARIO, java.sql.Types.OTHER);
-    				statement.setInt(2, entrega.getCliente().getId());
-    				
-        			query = "INSERT INTO Entrega(destinatario, produto, enderecoEntrega) VALUES (?, ?, ?) RETURNING id;";
-        			statement = con.prepareStatement(query);
-        			statement.setString(1, entrega.getCliente().getCpfCnpj());
-        			statement.setInt(2, entrega.getProduto().getIdProduto());
-        			statement.setInt(3, entrega.getCliente().getEndereco().getId());
-        			
-    			}
-    			else 
-    			{
-    				query = "UPDATE Cliente SET tipoCliente = ? WHERE id = ?;";
-    				statement = con.prepareStatement(query);
-    				statement.setObject(1, TipoCliente.REMETENTE, java.sql.Types.OTHER);
-    				statement.setInt(2, entrega.getCliente().getId());
-    				
-    				statement.execute();
-    				
-    				query = "INSERT INTO Entrega(remetente, produto) VALUES ('?', ?) RETURNING id;";
-    				statement = con.prepareStatement(query);
-        			statement.setString(1, entrega.getCliente().getCpfCnpj());
-        			statement.setInt(2, entrega.getProduto().getIdProduto());
-    			}
+    			statement = con.prepareStatement(query);
+    			
+    			statement.setString(1, entrega.getDestinatario().getCpfCnpj());
+    			statement.setString(2, entrega.getRemetente().getCpfCnpj());
+    			statement.setInt(3, entrega.getProduto().getIdProduto());
+    			statement.setInt(4, entrega.getEnderecoEntrega().getId());
     			
     			statement.execute();
     			rs = statement.getResultSet();
     			rs.next();
     			entrega.setId(rs.getInt(1));
     			
-    			break;
-    			
     			default: return;
     		}
          	
     	} catch (Exception e) {
-    		System.out.println(e);
-    		
-    		throw e;
+    		System.out.println(e.getMessage());
     	}
 		return;
     }

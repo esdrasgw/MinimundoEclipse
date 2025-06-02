@@ -1,7 +1,7 @@
-package models.Client;
+package models;
 
-import models.Entidade;
-import models.Endereco.Endereco;
+import enums.TipoCliente;
+import enums.TipoPessoa;
 
 public class Cliente implements Entidade {
 	

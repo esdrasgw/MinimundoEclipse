@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import models.EntidadeTipo;
-import models.Product.Produto;
+import enums.EntidadeTipo;
+import models.Produto;
 
 @WebServlet("/editarProduto")
 public class EditarProduto extends HttpServlet {

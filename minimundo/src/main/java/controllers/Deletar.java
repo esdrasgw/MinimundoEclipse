@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import models.EntidadeTipo;
-import models.Client.Cliente;
+import enums.EntidadeTipo;
 
 @WebServlet("/deletar")
 public class Deletar extends HttpServlet {
@@ -18,14 +17,15 @@ public class Deletar extends HttpServlet {
        
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int insertableId = Integer.valueOf(request.getParameter("id"));
-		int enderecoId = Integer.valueOf(request.getParameter("id2"));
 		EntidadeTipo tableName = EntidadeTipo.valueOf(request.getParameter("table"));
+		int enderecoId = 0;
 		
 		Connection con = new ConnectionController().ConnectToDatabase();
 		DatabaseController db = new DatabaseController();
 		
 		if (tableName == EntidadeTipo.CLIENTE)
 		{
+			enderecoId = Integer.valueOf(request.getParameter("id2"));
 			db.Delete(con, tableName, insertableId);
 			db.Delete(con, EntidadeTipo.ENDERECO, enderecoId);
 			response.sendRedirect("listaClientes");
@@ -35,6 +35,12 @@ public class Deletar extends HttpServlet {
 		{
 			db.Delete(con, tableName, insertableId);
 			response.sendRedirect("listaProdutos");
+		}
+
+		else if (tableName == EntidadeTipo.ENTREGA)
+		{
+			db.Delete(con, tableName, insertableId);
+			response.sendRedirect("listaEntregas");
 		}
 	}
 }

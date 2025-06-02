@@ -1,6 +1,4 @@
-package models.Endereco;
-
-import models.Entidade;
+package models;
 
 public class Endereco implements Entidade {
 	int id;

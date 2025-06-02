@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import enums.EntidadeTipo;
 import models.Entidade;
-import models.EntidadeTipo;
 
 @WebServlet("/listaProdutos")
 public class ListaProdutos extends HttpServlet {

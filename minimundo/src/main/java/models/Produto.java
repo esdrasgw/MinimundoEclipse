@@ -1,6 +1,4 @@
-package models.Product;
-
-import models.Entidade;
+package models;
 
 public class Produto implements Entidade {
     int idProduto;

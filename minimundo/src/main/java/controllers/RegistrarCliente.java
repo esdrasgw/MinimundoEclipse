@@ -11,11 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import models.EntidadeTipo;
-import models.Client.Cliente;
-import models.Client.TipoCliente;
-import models.Client.TipoPessoa;
-import models.Endereco.Endereco;
+import enums.EntidadeTipo;
+import enums.TipoCliente;
+import enums.TipoPessoa;
+import models.Cliente;
+import models.Endereco;
 
 @WebServlet("/registrarCliente")
 public class RegistrarCliente extends HttpServlet {
