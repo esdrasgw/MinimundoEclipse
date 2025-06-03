@@ -3,7 +3,7 @@ package models;
 import enums.TipoCliente;
 import enums.TipoPessoa;
 
-public class Cliente implements Entidade {
+public class Cliente extends Entidade {
 	
 	int id;
 	String razaoSocial;

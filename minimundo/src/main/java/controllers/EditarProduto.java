@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,7 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import daos.DAOFactory;
 import enums.EntidadeTipo;
+import interfaces.EntidadeDAO;
 import models.Produto;
 
 @WebServlet("/editarProduto")
@@ -17,41 +20,36 @@ public class EditarProduto extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int productId = Integer.valueOf(request.getParameter("id"));
-
-		Connection con = new ConnectionController().ConnectToDatabase();
-		DatabaseController db = new DatabaseController();
 		
-		Produto produtoGet = (Produto)db.SelectFromParam(con, EntidadeTipo.PRODUTO, "id", String.valueOf(productId));
-		produtoGet.setId(productId);
-		
-		request.setAttribute("produto", produtoGet);
-		request.getRequestDispatcher("/editarProduto.jsp").forward(request, response);
+		try (Connection con = new ConnectionController().connectToDatabase()) {
+			int productId = Integer.valueOf(request.getParameter("id"));
+			
+			EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
+			Produto produto = produtoDAO.findById(con, productId);
+			produto.setId(productId);
+			
+			request.setAttribute("produto", produto);
+			request.getRequestDispatcher("/editarProduto.jsp").forward(request, response);
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao buscar o produto: " + e.getMessage());
+		}
 	}
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+		try (Connection con = new ConnectionController().connectToDatabase()) {
 			int idProduct = Integer.parseInt(request.getParameter("id"));
 						
 			String nome = request.getParameter("nome");
 			String descricao = request.getParameter("descricao");
-
-			if (nome == null || nome.isEmpty() || descricao == null || descricao.isEmpty()) {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Nome e descrição são obrigatórios.");
-				return;
-			}
-
 			int estoque = Integer.parseInt(request.getParameter("estoque"));
 			double preco = Double.parseDouble(request.getParameter("preco"));
 			double peso = Double.parseDouble(request.getParameter("peso"));
 
-			DatabaseController db = new DatabaseController();
-			Connection con = new ConnectionController().ConnectToDatabase();
-
+			EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
+			
 			Produto produtoUpdate = new Produto(nome, descricao, estoque, preco, peso);
 			produtoUpdate.setId(idProduct);
 
-			db.Update(con, idProduct, EntidadeTipo.PRODUTO,produtoUpdate);
+			produtoDAO.update(con, idProduct, produtoUpdate);
 
 			response.sendRedirect("listaProdutos");
 

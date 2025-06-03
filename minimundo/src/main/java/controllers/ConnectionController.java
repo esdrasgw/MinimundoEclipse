@@ -4,20 +4,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class ConnectionController {
-	public Connection ConnectToDatabase()
-    {
-        Connection con = null;
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "1234";
 
+    public Connection connectToDatabase() {
         try {
             Class.forName("org.postgresql.Driver");
-
-            con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "1234");
-            if (con != null) System.out.println("Connected");
-            else System.out.println("Connection failed");
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (Exception e) {
-            System.out.println(e);   
+            throw new RuntimeException("Erro ao conectar ao banco de dados", e);
         }
-
-        return con;
     }
 }

@@ -11,9 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import daos.DAOFactory;
 import enums.EntidadeTipo;
 import enums.TipoCliente;
 import enums.TipoPessoa;
+import interfaces.EntidadeDAO;
 import models.Cliente;
 import models.Endereco;
 
@@ -23,7 +25,7 @@ public class RegistrarCliente extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
-    	try {
+    	try (Connection con = new ConnectionController().connectToDatabase()) {
     		
 	    	String razaoSocial = request.getParameter("razaoSocial");
 	        TipoPessoa tipoPessoa = TipoPessoa.valueOf(request.getParameter("tipoPessoa"));
@@ -42,15 +44,14 @@ public class RegistrarCliente extends HttpServlet {
 	        String complemento = request.getParameter("complemento");
 	        String pontoDeReferencia = request.getParameter("pontoDeReferencia");
 	        
+	        EntidadeDAO<Endereco> enderecoDAO = DAOFactory.getDAO(EntidadeTipo.ENDERECO);
+	        EntidadeDAO<Cliente> clienteDAO = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
         
         	Endereco endereco = new Endereco(logradouro, numero, bairro, cidade, pais, uf, cep, complemento, pontoDeReferencia);
-            Cliente client = new Cliente(razaoSocial, cpfCnpj, telefone, nomeFantasia, endereco, tipoCliente, tipoPessoa);
-            Connection con = new ConnectionController().ConnectToDatabase();
-            DatabaseController db = new DatabaseController();
+            Cliente cliente = new Cliente(razaoSocial, cpfCnpj, telefone, nomeFantasia, endereco, tipoCliente, tipoPessoa);
                 
-            db.Insert(con, endereco, EntidadeTipo.ENDERECO);
-            
-            db.Insert(con, client, EntidadeTipo.CLIENTE);
+            enderecoDAO.insert(con, endereco);
+            clienteDAO.insert(con, cliente);
 
             response.sendRedirect("listaClientes");
 

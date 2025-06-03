@@ -2,7 +2,10 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,24 +14,38 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import daos.DAOFactory;
 import enums.EntidadeTipo;
-import models.Entidade;
+import interfaces.EntidadeDAO;
+import models.Cliente;
+import models.ClienteEndereco;
+import models.Endereco;
 
 @WebServlet("/listaClientes")
 public class ListaClientes extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		DatabaseController db = new DatabaseController();
-		Connection con = new ConnectionController().ConnectToDatabase(); 
-		
-		List<Entidade> listClient = db.SelectAllFromTable(con, EntidadeTipo.CLIENTE);
-		List<Entidade> listEndereco = db.SelectAllFromTable(con, EntidadeTipo.ENDERECO);
-		
-		request.setAttribute("listaEndereco", listEndereco);
-		request.setAttribute("listaClientes", listClient);
-		
-		RequestDispatcher rd = request.getRequestDispatcher("/listaClientes.jsp");
-		rd.forward(request, response);
+		try (Connection con = new ConnectionController().connectToDatabase()) {
+			
+			EntidadeDAO<Endereco> enderecoDAO = DAOFactory.getDAO(EntidadeTipo.ENDERECO);
+			EntidadeDAO<Cliente> clienteDAO = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
+			
+			List<Cliente> listaClientes = clienteDAO.findAll(con);
+			List<ClienteEndereco> listaClienteEndereco = new ArrayList<>();
+			
+			for (Cliente cliente : listaClientes) {
+				Endereco endereco = enderecoDAO.findById(con, cliente.getEndereco().getId());
+				listaClienteEndereco.add(new ClienteEndereco(cliente, endereco));
+			}
+			
+			request.setAttribute("listaClientesEnderecos", listaClienteEndereco);
+			
+			RequestDispatcher rd = request.getRequestDispatcher("/listaClientes.jsp");
+			rd.forward(request, response);
+			
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao buscar: " + e.getMessage());
+		}
 	}
 }

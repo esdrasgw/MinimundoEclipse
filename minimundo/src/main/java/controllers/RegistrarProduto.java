@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import daos.DAOFactory;
 import enums.EntidadeTipo;
+import interfaces.EntidadeDAO;
 import models.Produto;
 
 @WebServlet("/registrarProduto")
@@ -19,25 +21,18 @@ public class RegistrarProduto extends HttpServlet {
     
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		try {
-	        String nome = request.getParameter("nome");
+    	try (Connection con = new ConnectionController().connectToDatabase()) {
+
+    		String nome = request.getParameter("nome");
 	        String descricao = request.getParameter("descricao");
-
-	        if (nome == null || nome.isEmpty() || descricao == null || descricao.isEmpty()) {
-	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Nome e descrição são obrigatórios.");
-	            return;
-	        }
-
 	        int estoque = Integer.parseInt(request.getParameter("estoque"));
 	        double preco = Double.parseDouble(request.getParameter("preco"));
 	        double peso = Double.parseDouble(request.getParameter("peso"));
 	        
-	        DatabaseController db = new DatabaseController();
-			Connection con = new ConnectionController().ConnectToDatabase();
-			
+	        EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
 			Produto produto = new Produto(nome, descricao, estoque, preco, peso);
 			
-			db.Insert(con, produto, EntidadeTipo.PRODUTO);
+			produtoDAO.insert(con, produto);
 			
 			response.sendRedirect("listaProdutos");
 			

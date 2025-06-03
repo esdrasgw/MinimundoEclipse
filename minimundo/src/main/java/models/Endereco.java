@@ -1,6 +1,6 @@
 package models;
 
-public class Endereco implements Entidade {
+public class Endereco extends Entidade {
 	int id;
 	String logradouro;
 	int numero;

@@ -20,10 +20,6 @@
 		</select></p>
 		<p>CPF/CNPJ: <input type=text name="cpfCnpj" value="${cliente.cpfCnpj}"/></p>
 		<p>Telefone: <input type=text name="telefone" value="${cliente.telefone}"/></p>
-		<p>Está recebendo ou enviando? <select name="tipoCliente">
-			<option value="DESTINATARIO">Recebendo </option>
-			<option value="REMETENTE" selected>Enviando </option>
-		</select></p>
 		<p>Logradouro: <input type=text name="logradouro" value="${endereco.logradouro}"/></p>
 		<p>Numero: <input type=text name="numero" value="${endereco.numero}"/></p>
 		<p>Bairro: <input type=text name="bairro" value="${endereco.bairro}"/></p>

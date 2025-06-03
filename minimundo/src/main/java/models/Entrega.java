@@ -1,6 +1,6 @@
 package models;
 
-public class Entrega implements Entidade {
+public class Entrega extends Entidade {
 	int id;
 	Cliente destinatario;
 	Cliente remetente;

@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import daos.DAOFactory;
 import enums.EntidadeTipo;
 import enums.TipoCliente;
 import enums.TipoPessoa;
+import interfaces.EntidadeDAO;
 import models.Cliente;
 import models.Endereco;
 
@@ -20,21 +22,23 @@ public class EditarCliente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int clientId = Integer.valueOf(request.getParameter("id"));
-
-		Connection con = new ConnectionController().ConnectToDatabase();
-		DatabaseController db = new DatabaseController();
 		
-		Cliente clienteGet = (Cliente)db.SelectFromParam(con, EntidadeTipo.CLIENTE, "id", String.valueOf(clientId));
-		clienteGet.setId(clientId);
-				
-		request.setAttribute("cliente", clienteGet);
-		request.setAttribute("endereco", clienteGet.getEndereco());
-		request.getRequestDispatcher("/editarCliente.jsp").forward(request, response);
+		try (Connection con = new ConnectionController().connectToDatabase()){
+			int clientId = Integer.parseInt(request.getParameter("id"));
+			
+			EntidadeDAO<Cliente> clienteDAO = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
+			Cliente cliente = clienteDAO.findById(con, clientId);
+			
+			request.setAttribute("cliente", cliente);
+			request.setAttribute("endereco", cliente.getEndereco());
+			request.getRequestDispatcher("/editarCliente.jsp").forward(request, response);
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao buscar cliente: " + e.getMessage());
+		}	
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+		try (Connection con = new ConnectionController().connectToDatabase()) {
 			int idClient = Integer.parseInt(request.getParameter("id"));
 			
 			String razaoSocial = request.getParameter("razaoSocial");
@@ -42,7 +46,7 @@ public class EditarCliente extends HttpServlet {
 			String cpfCnpj = request.getParameter("cpfCnpj");
 			String telefone = request.getParameter("telefone");
 			String nomeFantasia = request.getParameter("nomeFantasia");
-			TipoCliente tipoCliente = TipoCliente.valueOf(request.getParameter("tipoCliente"));
+			TipoCliente tipoCliente = TipoCliente.NULO;
 			
 			String logradouro = request.getParameter("logradouro");
 	        int numero = Integer.valueOf(request.getParameter("numero"));
@@ -54,20 +58,20 @@ public class EditarCliente extends HttpServlet {
 	        String complemento = request.getParameter("complemento");
 	        String pontoDeReferencia = request.getParameter("pontoDeReferencia");
 			
-			DatabaseController db = new DatabaseController();
-			Connection con = new ConnectionController().ConnectToDatabase();
+	        EntidadeDAO<Cliente> clienteDAO = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
+			EntidadeDAO<Endereco> enderecoDAO = DAOFactory.getDAO(EntidadeTipo.ENDERECO);
 			
-			Cliente oldCliente = (Cliente)db.SelectFromParam(con, EntidadeTipo.CLIENTE, "id", String.valueOf(idClient));
+			Cliente clienteAntigo = clienteDAO.findById(con, idClient);
 			
-			Endereco enderecoUpdate = new Endereco(logradouro, numero, bairro, cidade, uf, pais, cep, complemento, pontoDeReferencia);
-			enderecoUpdate.setId(oldCliente.getEndereco().getId());
+			Endereco enderecoAtualizado = new Endereco(logradouro, numero, bairro, cidade, uf, pais, cep, complemento, pontoDeReferencia);
+			enderecoAtualizado.setId(clienteAntigo.getEndereco().getId());
 			
-			Cliente clienteUpdate = new Cliente(razaoSocial, cpfCnpj, telefone, nomeFantasia, enderecoUpdate, tipoCliente, tipoPessoa);
-			clienteUpdate.setId(idClient);
+			Cliente clienteAtualizado = new Cliente(razaoSocial, cpfCnpj, telefone, nomeFantasia, enderecoAtualizado, tipoCliente, tipoPessoa);
+			clienteAtualizado.setId(idClient);
 			
-			db.Update(con, enderecoUpdate.getId(), EntidadeTipo.ENDERECO, enderecoUpdate);
-			db.Update(con, idClient, EntidadeTipo.CLIENTE, clienteUpdate);
-
+			enderecoDAO.update(con, enderecoAtualizado.getId(), enderecoAtualizado);
+			clienteDAO.update(con, idClient, clienteAtualizado);
+	
 			response.sendRedirect("listaClientes");
 
 		} catch (NumberFormatException e) {
@@ -76,5 +80,4 @@ public class EditarCliente extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro interno do servidor: " + e.getMessage());
 		}
 	}
-
 }

@@ -11,24 +11,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import daos.DAOFactory;
 import enums.EntidadeTipo;
-import models.Entidade;
+import interfaces.EntidadeDAO;
+import models.Entrega;
 
 @WebServlet("/listaEntregas")
 public class ListaEntregas extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		DatabaseController db = new DatabaseController();
-		Connection con = new ConnectionController().ConnectToDatabase(); 
-		
-		List<Entidade> list = db.SelectAllFromTable(con, EntidadeTipo.ENTREGA);
-				
-		request.setAttribute("listaEntregas", list);
-		
-		RequestDispatcher rd = request.getRequestDispatcher("/listaEntregas.jsp");
-		
-		rd.forward(request, response);		
+		try (Connection con = new ConnectionController().connectToDatabase()) {
+			
+			EntidadeDAO<Entrega> entregaDAO = DAOFactory.getDAO(EntidadeTipo.ENTREGA);
+			
+			List<Entrega> listaEntregas = entregaDAO.findAll(con);
+			
+			request.setAttribute("listaEntregas", listaEntregas);
+			
+			RequestDispatcher rd = request.getRequestDispatcher("/listaEntregas.jsp");
+			rd.forward(request, response);	
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao buscar: " + e.getMessage());
+		}
 	}
 }

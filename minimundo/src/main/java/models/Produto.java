@@ -1,6 +1,6 @@
 package models;
 
-public class Produto implements Entidade {
+public class Produto extends Entidade {
     int idProduto;
     String nome;
     String descricao;

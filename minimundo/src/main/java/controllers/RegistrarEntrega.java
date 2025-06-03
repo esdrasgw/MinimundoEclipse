@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import daos.ClienteDAO;
+import daos.DAOFactory;
 import enums.EntidadeTipo;
+import interfaces.EntidadeDAO;
 import models.Cliente;
 import models.Endereco;
 import models.Entrega;
@@ -22,22 +25,28 @@ public class RegistrarEntrega extends HttpServlet {
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		try {
-			DatabaseController db = new DatabaseController();
-			Connection con = new ConnectionController().ConnectToDatabase();
+    	try (Connection con = new ConnectionController().connectToDatabase()) {
 			
 			String destinatarioCpfCnpj = request.getParameter("destinatario");
 			String remetenteCpfCnpj = request.getParameter("remetente");
 			int produtoId = Integer.parseInt(request.getParameter("produto"));
 			
-			Cliente destinatario = (Cliente)db.SelectFromParam(con, EntidadeTipo.CLIENTE, "cpfCnpj", destinatarioCpfCnpj);
-			Cliente remetente = (Cliente)db.SelectFromParam(con, EntidadeTipo.CLIENTE, "cpfCnpj", remetenteCpfCnpj);
+			EntidadeDAO<Cliente> dao = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
+			ClienteDAO clienteDAO = null;
+			if (dao instanceof ClienteDAO) {
+				clienteDAO = (ClienteDAO) dao;
+			}
+			EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
+			EntidadeDAO<Entrega> entregaDAO = DAOFactory.getDAO(EntidadeTipo.ENTREGA);
+			
+			Cliente destinatario = clienteDAO.findByCpfCnpj(con, destinatarioCpfCnpj);
+			Cliente remetente = clienteDAO.findByCpfCnpj(con, remetenteCpfCnpj);
 			Endereco endereco = destinatario.getEndereco();
-			Produto produto = (Produto)db.SelectFromParam(con, EntidadeTipo.PRODUTO, "id", String.valueOf(produtoId));
+			Produto produto = produtoDAO.findById(con, produtoId);
 			
 			Entrega entrega = new Entrega(destinatario, remetente, produto, endereco);
 			
-			db.Insert(con, entrega, EntidadeTipo.ENTREGA);
+			entregaDAO.insert(con, entrega);
 			
 			response.sendRedirect("listaEntregas");
 			
