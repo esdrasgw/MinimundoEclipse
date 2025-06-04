@@ -52,8 +52,16 @@ public class RegistrarProduto extends HttpServlet {
     		
     		rd.forward(request, response);
     	
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {
+			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
+		} catch (Exception e) {
+			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
+   		}
 	}
 }

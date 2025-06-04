@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -54,10 +55,21 @@ public class EditarProduto extends HttpServlet {
 			response.sendRedirect("listaProdutos");
 
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Erro ao converter os parâmetros: " + e.getMessage());
+			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");	
+
+    		rd.forward(request, response);
+    	} catch (IllegalArgumentException e) {
+			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro interno do servidor: " + e.getMessage());
-		}
+			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
+    	}
 	}
 
 }

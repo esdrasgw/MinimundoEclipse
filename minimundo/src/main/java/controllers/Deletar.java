@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.sql.Connection;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -43,11 +44,17 @@ public class Deletar extends HttpServlet {
 					break;
 
 				default:
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Tipo de entidade inválido.");
+					request.setAttribute("mensagemErro", "Tipo de entidade inválido");
+					RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+		    		
+		    		rd.forward(request, response);
 			}
 
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao deletar entidade: " + e.getMessage());
+			request.setAttribute("mensagemErro", "Erro ao deletar entidade " + e.getMessage());
+			RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
 		}
 	}
 }

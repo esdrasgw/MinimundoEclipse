@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -52,21 +53,38 @@ public class RegistrarEntrega extends HttpServlet {
 			response.sendRedirect("listaEntregas");
 			
 		} catch (NullPointerException e) {
-
-    		request.setAttribute("mensagemErro", "Todos os campos são necessários");
+			if (e.getMessage().contains("destinatario")) {
+				request.setAttribute("mensagemErro", "O CPF/CNPJ do Destinatario não foi encontrado");
+			}
+			else if (e.getMessage().contains("getRemetente")) {
+				request.setAttribute("mensagemErro", "O CPF/CNPJ do Remetente não foi encontrado");
+			}
+			else if (e.getMessage().contains("getProduto")) {
+				request.setAttribute("mensagemErro", "O ID do produto não foi encontrado");
+			}
+			else 
+			{
+	    		request.setAttribute("mensagemErro", "Todos os campos são necessários");
+			}
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
-    		
     		rd.forward(request, response);
+  		
 		} catch (IllegalArgumentException e) {
-	    	if (e.getMessage().contains("produto")) {
+	    	if (e.getMessage().contains("string")) {
         		
-        		request.setAttribute("mensagemErro", "O campo ID do Produto só aceita números");
+        		request.setAttribute("mensagemErro", "Os campos CPF/CNPJ e ID do Produto só aceitam números");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);
+        	
+        	} else {
+        		request.setAttribute("mensagemErro", e.getMessage());
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
         		
         		rd.forward(request, response);
         	}
-		}  catch (Exception e) {
-			request.setAttribute("mensagemErro", e.getMessage());
+		} catch (Exception e) {
+			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
     		rd.forward(request, response);

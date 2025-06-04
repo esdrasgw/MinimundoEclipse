@@ -55,12 +55,16 @@ public class RegistrarCliente extends HttpServlet {
 
             response.sendRedirect("listaClientes");
 
-        } catch(NumberFormatException e)
-        {
+        } catch(NumberFormatException e) {
     		request.setAttribute("mensagemErro", "Os campos Número e CEP só aceitam números");
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
     		rd.forward(request, response);
+        } catch (IllegalArgumentException e) {
+			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);	
         } catch(SQLException e) {
         	if (e.getMessage().contains("cpfcnpj")) {
         		
@@ -69,10 +73,11 @@ public class RegistrarCliente extends HttpServlet {
         		
         		rd.forward(request, response);
         	}
-
         } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro interno ao registrar cliente.");
-        }
+			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
+   		}
     }
 }

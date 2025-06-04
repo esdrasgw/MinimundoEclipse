@@ -32,7 +32,10 @@ public class ListaEntregas extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("/listaEntregas.jsp");
 			rd.forward(request, response);	
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao buscar: " + e.getMessage());
-		}
+			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
+   		}
 	}
 }
