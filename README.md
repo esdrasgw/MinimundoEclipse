@@ -24,6 +24,8 @@ Nele é possível
 
 ## 🚀 Como executar o projeto
 
+- Baixe o .war que está em *releases*
+
 Crie uma base de dados no postgres.
 - *CREATE DATABASE 'nomedobanco';* (Foi utilizado 'postgres' como nome do banco para a criação do projeto)
 
