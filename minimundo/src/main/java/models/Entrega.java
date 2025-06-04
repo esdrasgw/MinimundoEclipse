@@ -6,12 +6,22 @@ public class Entrega extends Entidade {
 	Cliente remetente;
 	Produto produto;
 	Endereco enderecoEntrega;
+	boolean produtoEntregue;
 	
-	public Entrega(Cliente destinatario, Cliente remetente, Produto produto, Endereco enderecoEntrega) {
+	public Entrega(Cliente destinatario, Cliente remetente, Produto produto, Endereco enderecoEntrega, boolean produtoEntregue) {
 		this.destinatario = destinatario;
 		this.remetente = remetente;
 		this.produto = produto;
 		this.enderecoEntrega = enderecoEntrega;
+		this.produtoEntregue = produtoEntregue;
+	}
+
+	public boolean getProdutoEntregue() {
+		return produtoEntregue;
+	}
+
+	public void setProdutoEntregue(boolean entregue) {
+		this.produtoEntregue = entregue;
 	}
 
 	public int getId() {

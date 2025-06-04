@@ -46,6 +46,7 @@ public class EditarEntrega extends HttpServlet {
 			String destinatarioCpfCnpj = request.getParameter("destinatario");
 			String remetenteCpfCnpj = request.getParameter("remetente");
 			int produtoId = Integer.parseInt(request.getParameter("produto"));
+			boolean produtoEntregue = Boolean.parseBoolean(request.getParameter("produtoEntregue"));
 			
 			EntidadeDAO<Cliente> dao = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
 			ClienteDAO clienteDAO = null;
@@ -61,7 +62,7 @@ public class EditarEntrega extends HttpServlet {
 			Endereco endereco = destinatario.getEndereco();
 			Produto produto = produtoDAO.findById(con, produtoId);
 						
-			Entrega entregaUpdate = new Entrega(destinatario, remetente, produto, endereco);
+			Entrega entregaUpdate = new Entrega(destinatario, remetente, produto, endereco, produtoEntregue);
 			entregaUpdate.setId(idEntrega);
 			
 			entregaDAO.update(con, idEntrega, entregaUpdate);

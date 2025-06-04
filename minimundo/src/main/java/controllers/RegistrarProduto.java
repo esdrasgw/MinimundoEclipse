@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -36,19 +37,23 @@ public class RegistrarProduto extends HttpServlet {
 			
 			response.sendRedirect("listaProdutos");
 			
-	    } catch (IllegalArgumentException e) {
-	    	if (e.getMessage().contains("estoque") || e.getMessage().contains("preco") || e.getMessage().contains("peso")) {
-        		
-        		request.setAttribute("mensagemErro", "Os campos Estoque, Preço e Peso só aceitam números");
-        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
-        		
-        		rd.forward(request, response);
-        	}
-		}
-		
-		catch (Exception e)
-		{
-	    	System.out.println(e);
+	    } catch (NumberFormatException e) {
+	    	
+	    	if (e.getMessage().contains(","))
+	    	{
+	    		request.setAttribute("mensagemErro", "Por favor use '.' ao invés de ',' para os decimais.");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+	    	}
+	    	
+    		request.setAttribute("mensagemErro", "Os campos Estoque, Preço e Peso só aceitam números");
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
+    	
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 }

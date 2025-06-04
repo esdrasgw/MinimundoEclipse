@@ -12,14 +12,14 @@ public class Endereco extends Entidade {
 	String complemento;
 	String pontoDeReferencia;
 
-	public Endereco(String logradouro, int numero, String bairro, String cidade, String uF, String pais, int cep,
+	public Endereco(String logradouro, int numero, String bairro, String cidade, String UF, String pais, int cep,
 			String complemento, String pontoDeReferencia) {
 		
 		this.logradouro = logradouro;
 		this.numero = numero;
 		this.bairro = bairro;
 		this.cidade = cidade;
-		UF = uF;
+		this.UF = UF;
 		this.pais = pais;
 		this.cep = cep;
 		this.complemento = complemento;
@@ -70,8 +70,8 @@ public class Endereco extends Entidade {
 		return UF;
 	}
 
-	public void setUF(String uF) {
-		UF = uF;
+	public void setUF(String UF) {
+		this.UF = UF;
 	}
 
 	public String getPais() {
@@ -104,5 +104,10 @@ public class Endereco extends Entidade {
 
 	public void setPontoDeReferencia(String pontoDeReferencia) {
 		this.pontoDeReferencia = pontoDeReferencia;
+	}
+	
+	@Override
+	public String toString() {	
+	    return logradouro + " - " + numero + ", " + complemento + ", " + bairro + ", " + cidade + ", " + pontoDeReferencia + " - " + cep  + ", UF:" + UF + " - " + pais;
 	}
 }

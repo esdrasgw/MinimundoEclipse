@@ -47,7 +47,7 @@ public class RegistrarCliente extends HttpServlet {
 	        EntidadeDAO<Endereco> enderecoDAO = DAOFactory.getDAO(EntidadeTipo.ENDERECO);
 	        EntidadeDAO<Cliente> clienteDAO = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
         
-        	Endereco endereco = new Endereco(logradouro, numero, bairro, cidade, pais, uf, cep, complemento, pontoDeReferencia);
+        	Endereco endereco = new Endereco(logradouro, numero, bairro, cidade, uf, pais, cep, complemento, pontoDeReferencia);
             Cliente cliente = new Cliente(razaoSocial, cpfCnpj, telefone, nomeFantasia, endereco, tipoCliente, tipoPessoa);
                 
             enderecoDAO.insert(con, endereco);

@@ -16,12 +16,13 @@ public class EntregaBuilder {
         String destinatarioCpfCnpj = rs.getString("destinatario");
         String remetenteCpfCnpj = rs.getString("remetente");
         int produtoId = rs.getInt("produto");
+        boolean produtoEntregue = rs.getBoolean("produtoEntregue");
 
         Cliente destinatario = new ClienteDAO().findByCpfCnpj(con, destinatarioCpfCnpj);
         Cliente remetente = new ClienteDAO().findByCpfCnpj(con, remetenteCpfCnpj);
         Produto produto = new ProdutoDAO().findById(con, produtoId);
 
-        Entrega entrega = new Entrega(destinatario, remetente, produto, destinatario.getEndereco());
+        Entrega entrega = new Entrega(destinatario, remetente, produto, destinatario.getEndereco(), produtoEntregue);
         entrega.setId(id);
         return entrega;
     }

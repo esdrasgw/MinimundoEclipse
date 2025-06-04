@@ -13,7 +13,10 @@
 		<p>Insira o CPF/CNPJ do Destinatário: <input type="text" name="destinatario" value="${entrega.destinatario.cpfCnpj}"/></p>
 		<p>Insira o CPF/CNPJ do Remetente: <input type="text" name="remetente" value="${entrega.remetente.cpfCnpj}"/></p>
 		<p>Insira o ID do Produto: <input type="text" name="produto" value="${entrega.produto.idProduto}"/></p>
-	
+		Já foi entregue?                   
+		<input type="radio" value="true" name="produtoEntregue"/>Sim
+		<input type="radio" value="false" name="produtoEntregue"/>Não
+		
 		<p><input type="submit" value="Enviar"/></p>
 		
 		<input type="hidden" name="id" value="${entrega.id}" />
