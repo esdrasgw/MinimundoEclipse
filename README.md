@@ -29,7 +29,7 @@ Nele é possível
 Crie uma base de dados no postgres.
 - *CREATE DATABASE 'nomedobanco';* (Foi utilizado 'postgres' como nome do banco para a criação do projeto)
 
-Execute o script *'MinimundoPostgres.sql'* no postgres que está no .war do projeto para a criação das tabelas e dos tipos.
+Execute o script *'MinimundoPostgres.sql'* no postgres para a criação das tabelas e dos tipos.
 
 Configure a conexão com o banco no arquivo java/controllers/ConnectionController.java nos campos  
 - **URL** (URL padrão utilizando 'postgres' como nome do banco).
