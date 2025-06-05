@@ -36,8 +36,6 @@ Configure a conexão com o banco no arquivo java/controllers/ConnectionControlle
 - **USER** (Seu usuário, padrão sendo 'postgres').
 - **PASSWORD** (Sua senha, padrão sendo '1234').
 
-Faça o deploy no TomCat
+Faça o deploy no TomCat usando sua IDE 
   
-- 'cp target/seu-projeto.war /caminho/tomcat/webapps/' para copiar o .war para o webapps do seu TomCat.  
-
 ### Inicie o TomCat e acesse: **'localhost:8080/minimundo'**
