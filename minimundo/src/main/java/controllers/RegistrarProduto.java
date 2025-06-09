@@ -30,6 +30,8 @@ public class RegistrarProduto extends HttpServlet {
 	        double preco = Double.parseDouble(request.getParameter("preco"));
 	        double peso = Double.parseDouble(request.getParameter("peso"));
 	        
+	        if (nome == "" || descricao == "") throw new NullPointerException();
+	        
 	        EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
 			Produto produto = new Produto(nome, descricao, estoque, preco, peso);
 			
@@ -37,7 +39,14 @@ public class RegistrarProduto extends HttpServlet {
 			
 			response.sendRedirect("listaProdutos");
 			
-	    } catch (NumberFormatException e) {
+		} catch (NullPointerException e) {	
+    		
+			request.setAttribute("mensagemErro", "Todos os campos são necessários");
+			
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		rd.forward(request, response);
+    		
+		} catch (NumberFormatException e) {
 	    	
 	    	if (e.getMessage().contains(","))
 	    	{
@@ -45,13 +54,18 @@ public class RegistrarProduto extends HttpServlet {
 	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
 	    		
 	    		rd.forward(request, response);
-	    	}
+	    	} else if (e.getMessage().contains("\"\"")) {
+	    		request.setAttribute("mensagemErro", "Todos os campos são necessários");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+	    	} else {
 	    	
-    		request.setAttribute("mensagemErro", "Os campos Estoque, Preço e Peso só aceitam números");
-    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
-    		
-    		rd.forward(request, response);
-    	
+	    		request.setAttribute("mensagemErro", "Os campos Estoque, Preço e Peso só aceitam números");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+	    	}
 		} catch (IllegalArgumentException e) {
 			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");

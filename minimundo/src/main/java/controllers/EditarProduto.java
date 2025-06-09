@@ -44,6 +44,8 @@ public class EditarProduto extends HttpServlet {
 			int estoque = Integer.parseInt(request.getParameter("estoque"));
 			double preco = Double.parseDouble(request.getParameter("preco"));
 			double peso = Double.parseDouble(request.getParameter("peso"));
+			
+	        if (nome == "" || descricao == "") throw new NullPointerException();
 
 			EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
 			
@@ -54,12 +56,34 @@ public class EditarProduto extends HttpServlet {
 
 			response.sendRedirect("listaProdutos");
 
-		} catch (NumberFormatException e) {
-			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
-    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");	
-
+		} catch (NullPointerException e) {	
+    		
+			request.setAttribute("mensagemErro", "Todos os campos são necessários");
+			
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		rd.forward(request, response);
-    	} catch (IllegalArgumentException e) {
+    		
+		} catch (NumberFormatException e) {
+	    	
+	    	if (e.getMessage().contains(","))
+	    	{
+	    		request.setAttribute("mensagemErro", "Por favor use '.' ao invés de ',' para os decimais.");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+	    	} else if (e.getMessage().contains("\"\"")) {
+	    		request.setAttribute("mensagemErro", "Todos os campos são necessários");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+	    	} else {
+	    	
+	    		request.setAttribute("mensagemErro", "Os campos Estoque, Preço e Peso só aceitam números");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+	    	}
+		} catch (IllegalArgumentException e) {
 			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
@@ -69,7 +93,7 @@ public class EditarProduto extends HttpServlet {
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
     		rd.forward(request, response);
-    	}
+   		}
 	}
 
 }

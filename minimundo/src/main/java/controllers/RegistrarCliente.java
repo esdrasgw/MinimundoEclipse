@@ -54,14 +54,26 @@ public class RegistrarCliente extends HttpServlet {
             clienteDAO.insert(con, cliente);
 
             response.sendRedirect("listaClientes");
-
-        } catch(NumberFormatException e) {
-    		request.setAttribute("mensagemErro", "Os campos Número e CEP só aceitam números");
+    	} catch (NullPointerException e){
+    		request.setAttribute("mensagemErro", "Todos os campos são necessários");
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
     		rd.forward(request, response);
+    		
+        } catch(NumberFormatException e) {
+        	if (e.getMessage().contains("\"\"")) {
+        		request.setAttribute("mensagemErro", "Todos os campos são necessários");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);	
+        	} else {
+	    		request.setAttribute("mensagemErro", "Os campos Número e CEP só aceitam números.");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+    		}
         } catch (IllegalArgumentException e) {
-			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
+			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente" + e + e.getMessage());
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
     		rd.forward(request, response);	

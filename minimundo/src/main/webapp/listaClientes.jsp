@@ -20,6 +20,7 @@
 	<table border="1">
     <thead>
         <tr>
+        	<th>ID</th>
             <th>Razão Social</th>
             <th>CPF/CNPJ</th>
             <th>Telefone</th>
@@ -42,6 +43,7 @@
     <tbody>
         <c:forEach items="${listaClientesEnderecos}" var="lista">
 		    <tr>
+		    	<td>${lista.cliente.id}</td>
 		        <td>${lista.cliente.razaoSocial}</td>
 		        <td>${lista.cliente.cpfCnpj}</td>
 		        <td>${lista.cliente.telefone}</td>

@@ -30,6 +30,9 @@ public class RegistrarEntrega extends HttpServlet {
 			
 			String destinatarioCpfCnpj = request.getParameter("destinatario");
 			String remetenteCpfCnpj = request.getParameter("remetente");
+			
+			if (destinatarioCpfCnpj.equals(remetenteCpfCnpj)) throw new IllegalArgumentException("Cpf e Cnpj iguais");
+
 			int produtoId = Integer.parseInt(request.getParameter("produto"));
 			boolean produtoEntregue = Boolean.parseBoolean(request.getParameter("produtoEntregue"));
 			
@@ -40,7 +43,7 @@ public class RegistrarEntrega extends HttpServlet {
 			}
 			EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
 			EntidadeDAO<Entrega> entregaDAO = DAOFactory.getDAO(EntidadeTipo.ENTREGA);
-			
+						
 			Cliente destinatario = clienteDAO.findByCpfCnpj(con, destinatarioCpfCnpj);
 			Cliente remetente = clienteDAO.findByCpfCnpj(con, remetenteCpfCnpj);
 			Endereco endereco = destinatario.getEndereco();
@@ -70,7 +73,22 @@ public class RegistrarEntrega extends HttpServlet {
     		rd.forward(request, response);
   		
 		} catch (IllegalArgumentException e) {
-	    	if (e.getMessage().contains("string")) {
+			
+			if (e.getMessage().contains("\"\"")) {
+				
+        		request.setAttribute("mensagemErro", "Todos os campos são necessários.");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);
+        		
+			} else if (e.getMessage().contains("Cpf e Cnpj iguais")) {
+        		
+        		request.setAttribute("mensagemErro", "Os campos CPF/CNPJ do destinatario e do remetente não podem ser iguais");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);
+				
+			} else if (e.getMessage().contains("string")) {
         		
         		request.setAttribute("mensagemErro", "Os campos CPF/CNPJ e ID do Produto só aceitam números");
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
@@ -78,7 +96,7 @@ public class RegistrarEntrega extends HttpServlet {
         		rd.forward(request, response);
         	
         	} else {
-        		request.setAttribute("mensagemErro", e.getMessage());
+    			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
         		
         		rd.forward(request, response);

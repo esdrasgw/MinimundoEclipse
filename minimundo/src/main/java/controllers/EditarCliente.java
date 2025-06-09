@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -37,7 +38,8 @@ public class EditarCliente extends HttpServlet {
 			request.setAttribute("mensagemErro", "Cliente não encontrado no banco");
 			RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
-    		rd.forward(request, response);		}	
+    		rd.forward(request, response);		
+    	}	
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -77,21 +79,42 @@ public class EditarCliente extends HttpServlet {
 	
 			response.sendRedirect("listaClientes");
 
-		} catch (NumberFormatException e) {
-			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
-    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");	
-
-    		rd.forward(request, response);
-    	} catch (IllegalArgumentException e) {
-			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente");
+		} catch (NullPointerException e){
+    		request.setAttribute("mensagemErro", "Todos os campos são necessários");
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
     		rd.forward(request, response);
-		} catch (Exception e) {
+    		
+        } catch(NumberFormatException e) {
+        	if (e.getMessage().contains("\"\"")) {
+        		request.setAttribute("mensagemErro", "Todos os campos são necessários");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);	
+        	} else {
+	    		request.setAttribute("mensagemErro", "Os campos Número e CEP só aceitam números.");
+	    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+	    		
+	    		rd.forward(request, response);
+    		}
+        } catch (IllegalArgumentException e) {
+			request.setAttribute("mensagemErro", "Verifique os campos e tente novamente" + e + e.getMessage());
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);	
+        } catch(SQLException e) {
+        	if (e.getMessage().contains("cpfcnpj")) {
+        		
+        		request.setAttribute("mensagemErro", "CPF ou CNPJ já existe");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);
+        	}
+        } catch (Exception e) {
 			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		
     		rd.forward(request, response);
-    	}
+   		}
 	}
 }

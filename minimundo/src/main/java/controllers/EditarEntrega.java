@@ -84,8 +84,17 @@ public class EditarEntrega extends HttpServlet {
 			}
     		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
     		rd.forward(request, response);
+  		
 		} catch (IllegalArgumentException e) {
-	    	if (e.getMessage().contains("string")) {
+			
+			if (e.getMessage().contains("\"\"")) {
+				
+        		request.setAttribute("mensagemErro", "Todos os campos são necessários.");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);
+				
+			} else if (e.getMessage().contains("string")) {
         		
         		request.setAttribute("mensagemErro", "Os campos CPF/CNPJ e ID do Produto só aceitam números");
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
@@ -93,7 +102,7 @@ public class EditarEntrega extends HttpServlet {
         		rd.forward(request, response);
         	
         	} else {
-        		request.setAttribute("mensagemErro", e.getMessage());
+    			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
         		
         		rd.forward(request, response);
