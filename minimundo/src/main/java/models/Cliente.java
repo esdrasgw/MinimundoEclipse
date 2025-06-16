@@ -14,14 +14,13 @@ public class Cliente extends Entidade {
     TipoCliente tipoCliente;
     TipoPessoa tipoPessoa;
 
-    public Cliente(String razaoSocial, String cpfCnpj, String telefone, String nomeFantasia, Endereco endereco, TipoCliente tipoCliente, TipoPessoa tipoPessoa) {
+    public Cliente(String razaoSocial, String cpfCnpj, String telefone, String nomeFantasia, Endereco endereco, TipoPessoa tipoPessoa) {
        	
     	this.razaoSocial = razaoSocial;
         this.cpfCnpj = cpfCnpj;
         this.telefone = telefone;
         this.endereco = endereco;
         this.nomeFantasia = nomeFantasia;
-        this.tipoCliente = tipoCliente;
         this.tipoPessoa = tipoPessoa;
     }
     

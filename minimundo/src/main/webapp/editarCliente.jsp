@@ -11,6 +11,7 @@
 <title>Editar Cliente</title>
 </head>
 <body>
+	<div class="form-wrapper">
 	<form action="${linkServletEditarCliente}" method="post">
 		<p>Razão Social: <input type="text" name="razaoSocial" value="${cliente.razaoSocial}"/></p>
 		<p>Nome Fantasia: <input type="text" name="nomeFantasia" value="${cliente.nomeFantasia}"/></p>
@@ -33,8 +34,9 @@
 		<input type="hidden" name="id" value="${cliente.id}" />
 		
 		<p><input type="submit" value="Enviar"/></p>
+		
+		<a href = "index.html">Voltar ao início</a>
 	</form>
-	
-	<a href = "index.html">Voltar ao início</a>
+	</div>
 </body>
 </html>

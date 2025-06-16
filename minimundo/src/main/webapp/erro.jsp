@@ -9,9 +9,8 @@
 <title>Erro</title>
 </head>
 <body>
-	<p>"${mensagemErro}"</p>
-	
 	<form action="index.html">
+		<p>"${mensagemErro}"</p>
 		<input type="submit" value="Voltar ao Início"/>
 	</form>
 </body>

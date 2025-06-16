@@ -10,8 +10,10 @@
 <title>Registrar Novo Cliente</title>
 </head>
 <body>
+<a href = "index.html">Voltar ao início</a>
+<a href = "listaClientes">Lista de clientes</a>
 	<form action="${linkServletNovoCliente}" method="post">
-		<p>Razão Social: <input type="text" name="razaoSocial"/></p>
+		<p>Razão Social: <input type="text" name="razaoSocial"/></p> 
 		<p>Nome Fantasia: <input type="text" name="nomeFantasia"/></p>
 		<p>Pessoa Física ou Jurídica? <select name="tipoPessoa">
 			<option value="FISICA">Pessoa Física </option> 
@@ -30,7 +32,5 @@
 		<p>Ponto de Referência: <input type=text name="pontoDeReferencia"/></p>
 		<p><input type="submit" value="Enviar"/></p>
 	</form>
-	
-	<a href = "index.html">Voltar ao início</a>
 </body>
 </html>

@@ -9,6 +9,8 @@
 <title>Registrar Novo Produto</title>
 </head>
 <body>
+<a href = "index.html">Voltar ao início</a>
+<a href = "listaProdutos">Lista de produtos</a>
 	<form action="${linkServletNovoProduto}" method="post">
 		<p>Nome: <input type="text" name="nome" /></p>
 		<p>Descrição: <input type="text" name="descricao" /></p>
@@ -17,9 +19,6 @@
 		<p>Peso: <input type="text" name="peso" /></p>
 
 		<p><input type="submit" value="Enviar" /></p>
-		
 	</form>
-	
-	<a href = "index.html">Voltar ao início</a>
 </body>
 </html>

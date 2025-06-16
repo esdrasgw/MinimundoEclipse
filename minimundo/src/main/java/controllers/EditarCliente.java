@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import daos.DAOFactory;
 import enums.EntidadeTipo;
-import enums.TipoCliente;
 import enums.TipoPessoa;
 import interfaces.EntidadeDAO;
 import models.Cliente;
@@ -51,7 +50,6 @@ public class EditarCliente extends HttpServlet {
 			String cpfCnpj = request.getParameter("cpfCnpj");
 			String telefone = request.getParameter("telefone");
 			String nomeFantasia = request.getParameter("nomeFantasia");
-			TipoCliente tipoCliente = TipoCliente.NULO;
 			
 			String logradouro = request.getParameter("logradouro");
 	        int numero = Integer.valueOf(request.getParameter("numero"));
@@ -71,7 +69,7 @@ public class EditarCliente extends HttpServlet {
 			Endereco enderecoAtualizado = new Endereco(logradouro, numero, bairro, cidade, uf, pais, cep, complemento, pontoDeReferencia);
 			enderecoAtualizado.setId(clienteAntigo.getEndereco().getId());
 			
-			Cliente clienteAtualizado = new Cliente(razaoSocial, cpfCnpj, telefone, nomeFantasia, enderecoAtualizado, tipoCliente, tipoPessoa);
+			Cliente clienteAtualizado = new Cliente(razaoSocial, cpfCnpj, telefone, nomeFantasia, enderecoAtualizado, tipoPessoa);
 			clienteAtualizado.setId(idClient);
 			
 			enderecoDAO.update(con, enderecoAtualizado.getId(), enderecoAtualizado);

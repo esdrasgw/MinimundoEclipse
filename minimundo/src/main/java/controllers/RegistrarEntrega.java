@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -22,6 +23,25 @@ import models.Produto;
 @WebServlet("/registrarEntrega")
 public class RegistrarEntrega extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try (Connection con = new ConnectionController().connectToDatabase()) {
+			
+			EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
+			
+			List<Produto> listaProdutos = produtoDAO.findAll(con);
+			
+			request.setAttribute("listaProdutos", listaProdutos);
+			
+			RequestDispatcher rd = request.getRequestDispatcher("/registrarEntrega.jsp");
+			rd.forward(request, response);	
+		} catch (Exception e) {
+			request.setAttribute("mensagemErro", "Erro inesperado " + e.getMessage());
+    		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+    		
+    		rd.forward(request, response);
+   		}
+	}
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -30,7 +50,7 @@ public class RegistrarEntrega extends HttpServlet {
 			String destinatarioCpfCnpj = request.getParameter("destinatario");
 			String remetenteCpfCnpj = request.getParameter("remetente");
 			
-			if (destinatarioCpfCnpj.equals(remetenteCpfCnpj)) throw new IllegalArgumentException("Cpf e Cnpj iguais");
+			if (destinatarioCpfCnpj.equals(remetenteCpfCnpj)) throw new IllegalArgumentException("Cpfs ou Cnpjs do destinatario e do remetente são iguais");
 
 			int produtoId = Integer.parseInt(request.getParameter("produto"));
 			boolean produtoEntregue = Boolean.parseBoolean(request.getParameter("produtoEntregue"));
@@ -45,10 +65,11 @@ public class RegistrarEntrega extends HttpServlet {
 						
 			Cliente destinatario = clienteDAO.findByCpfCnpj(con, destinatarioCpfCnpj);
 			Cliente remetente = clienteDAO.findByCpfCnpj(con, remetenteCpfCnpj);
-			Endereco endereco = destinatario.getEndereco();
+			Endereco enderecoEntrega = destinatario.getEndereco();
+			Endereco enderecoRemetente = remetente.getEndereco();
 			Produto produto = produtoDAO.findById(con, produtoId);
 			
-			Entrega entrega = new Entrega(destinatario, remetente, produto, endereco, produtoEntregue);
+			Entrega entrega = new Entrega(destinatario, remetente, produto, enderecoEntrega, enderecoRemetente, produtoEntregue);
 			
 			entregaDAO.insert(con, entrega);
 			
@@ -60,9 +81,6 @@ public class RegistrarEntrega extends HttpServlet {
 			}
 			else if (e.getMessage().contains("getRemetente")) {
 				request.setAttribute("mensagemErro", "O CPF/CNPJ do Remetente não foi encontrado");
-			}
-			else if (e.getMessage().contains("getProduto")) {
-				request.setAttribute("mensagemErro", "O ID do produto não foi encontrado");
 			}
 			else 
 			{

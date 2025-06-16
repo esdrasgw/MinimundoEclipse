@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -28,10 +29,15 @@ public class EditarEntrega extends HttpServlet {
 		try (Connection con = new ConnectionController().connectToDatabase()) {
 			int entregaId = Integer.valueOf(request.getParameter("id"));
 			
+			EntidadeDAO<Produto> produtoDAO = DAOFactory.getDAO(EntidadeTipo.PRODUTO);
+			
+			List<Produto> listaProdutos = produtoDAO.findAll(con);
+			
 			EntidadeDAO<Entrega> entregaDAO = DAOFactory.getDAO(EntidadeTipo.ENTREGA);
 			Entrega entrega = entregaDAO.findById(con, entregaId);
 			
 			request.setAttribute("entrega", entrega);
+			request.setAttribute("listaProdutos", listaProdutos);
 			request.getRequestDispatcher("/editarEntrega.jsp").forward(request, response);
 		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro ao buscar a entrega: " + e.getMessage());
@@ -58,10 +64,11 @@ public class EditarEntrega extends HttpServlet {
 			
 			Cliente destinatario = clienteDAO.findByCpfCnpj(con, destinatarioCpfCnpj);
 			Cliente remetente = clienteDAO.findByCpfCnpj(con, remetenteCpfCnpj);
-			Endereco endereco = destinatario.getEndereco();
+			Endereco enderecoEntrega = destinatario.getEndereco();
+			Endereco enderecoRemetente = remetente.getEndereco();
 			Produto produto = produtoDAO.findById(con, produtoId);
 						
-			Entrega entregaUpdate = new Entrega(destinatario, remetente, produto, endereco, produtoEntregue);
+			Entrega entregaUpdate = new Entrega(destinatario, remetente, produto, enderecoEntrega, enderecoRemetente, produtoEntregue);
 			entregaUpdate.setId(idEntrega);
 			
 			entregaDAO.update(con, idEntrega, entregaUpdate);

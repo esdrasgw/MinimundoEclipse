@@ -12,6 +12,7 @@
 <title>Atualizar Produto</title>
 </head>
 <body>
+<div class="form-wrapper">
 	<form action="${linkServletEditarProduto}" method="post">
 		<p>Nome: <input type="text" name="nome" value="${produto.nome}"/></p>
 		<p>Descrição: <input type="text" name="descricao" value="${produto.descricao}"/></p>
@@ -22,8 +23,9 @@
 		<input type="hidden" name="id" value="${produto.idProduto}" />
 
 		<p><input type="submit" value="Enviar" /></p>
-	</form>
 		
-	<a href = "index.html">Voltar ao início</a>
+		<a href = "index.html">Voltar ao início</a>
+	</form>
+		</div>
 </body>
 </html>

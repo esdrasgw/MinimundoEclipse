@@ -9,18 +9,24 @@
 <title>Nova Entrega</title>
 </head>
 <body>
+<a href = "index.html">Voltar ao início</a>
+<a href = "listaEntregas">Lista de entregas</a>
 	<form action="${linkServletNovaEntrega}" method="post">
 		<p>Insira o CPF/CNPJ do Destinatário: <input type="text" name="destinatario"/></p>
 		<p>Insira o CPF/CNPJ do Remetente: <input type="text" name="remetente"/></p>
-		<p>Insira o ID do Produto: <input type="text" name="produto"/></p>
-		Já foi entregue?                   
+		<p>Selecione o produto 
+			<select name="produto">
+				<c:forEach items="${listaProdutos}" var="produto">
+					<option value="${produto.idProduto}">${produto.nome}</option>
+				</c:forEach>
+			</select>
+		</p>
+		Produto Entregue?             
 		<input type="radio" value="true" name="produtoEntregue"/>Sim
 		<input type="radio" value="false" name="produtoEntregue"/>Não
 		
-		<p><input type="submit" value="Enviar"/></p>		
+		<p><input type="submit" value="Enviar"/></p>
+		
 	</form>
-	
-	<a href = "index.html">Voltar ao início</a>
-	
 </body>
 </html>

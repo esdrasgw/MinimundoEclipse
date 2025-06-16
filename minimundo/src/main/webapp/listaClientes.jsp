@@ -9,6 +9,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Lista de Clientes</title>
+<style>
+	table {
+		border-collapse: separate;
+	}
+	table th {
+		padding: 5px;
+	}
+</style>
 </head>
 <body>
 	<c:if test="${ not empty cliente }">
@@ -25,8 +33,7 @@
             <th>CPF/CNPJ</th>
             <th>Telefone</th>
             <th>Nome Fantasia</th>
-            <th>Tipo Pessoa</th>
-            <th>Tipo Cliente</th>
+            <th>Pessoa</th>
             <th>Logradouro</th>
             <th>Número</th>
             <th>Bairro</th>
@@ -49,7 +56,6 @@
 		        <td>${lista.cliente.telefone}</td>
 		        <td>${lista.cliente.nomeFantasia}</td>
 		        <td>${lista.cliente.tipoPessoa}</td>
-		        <td>${lista.cliente.tipoCliente}</td>
 		
 		        <td>${lista.endereco.logradouro}</td>
 		        <td>${lista.endereco.numero}</td>
@@ -68,7 +74,8 @@
     </tbody>
 </table>
 	
-	<a href = "index.html">Voltar ao início</a>
+	<p><a href = "registrarCliente.jsp">Registrar novo cliente</a></p>
+	<p><a href = "index.html">Voltar ao início</a></p>
 	
 </body>
 </html>

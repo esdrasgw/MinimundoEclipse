@@ -57,15 +57,14 @@ public class ClienteDAO implements EntidadeDAO<Cliente> {
             throw new IllegalArgumentException("CNPJ inválido.");
         }
 
-        String query = "INSERT INTO Cliente (razaoSocial, cpfCnpj, telefone, endereco, nomeFantasia, tipoCliente, tipoPessoa) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        String query = "INSERT INTO Cliente (razaoSocial, cpfCnpj, telefone, endereco, nomeFantasia, tipoPessoa) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
         try (PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setString(1, client.getRazaoSocial());
             stmt.setString(2, client.getCpfCnpj());
             stmt.setString(3, client.getTelefone());
             stmt.setInt(4, client.getEndereco().getId());
             stmt.setString(5, client.getNomeFantasia());
-            stmt.setObject(6, client.getTipoCliente().name(), Types.OTHER);
-            stmt.setObject(7, client.getTipoPessoa().name(), Types.OTHER);
+            stmt.setObject(6, client.getTipoPessoa().name(), Types.OTHER);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -76,16 +75,15 @@ public class ClienteDAO implements EntidadeDAO<Cliente> {
 
     @Override
     public void update(Connection con, int id, Cliente client) throws SQLException {
-        String query = "UPDATE Cliente SET razaoSocial = ?, nomeFantasia = ?, cpfCnpj = ?, telefone = ?, endereco = ?, tipoCliente = ?, tipoPessoa = ? WHERE id = ?";
+        String query = "UPDATE Cliente SET razaoSocial = ?, nomeFantasia = ?, cpfCnpj = ?, telefone = ?, endereco = ?, tipoPessoa = ? WHERE id = ?";
         try (PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setString(1, client.getRazaoSocial());
             stmt.setString(2, client.getNomeFantasia());
             stmt.setString(3, client.getCpfCnpj());
             stmt.setString(4, client.getTelefone());
             stmt.setInt(5, client.getEndereco().getId());
-            stmt.setObject(6, client.getTipoCliente().name(), Types.OTHER);
-            stmt.setObject(7, client.getTipoPessoa().name(), Types.OTHER);
-            stmt.setInt(8, id);
+            stmt.setObject(6, client.getTipoPessoa().name(), Types.OTHER);
+            stmt.setInt(7, id);
             stmt.execute();
         }
     }

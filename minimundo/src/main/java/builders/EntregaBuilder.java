@@ -22,7 +22,7 @@ public class EntregaBuilder {
         Cliente remetente = new ClienteDAO().findByCpfCnpj(con, remetenteCpfCnpj);
         Produto produto = new ProdutoDAO().findById(con, produtoId);
 
-        Entrega entrega = new Entrega(destinatario, remetente, produto, destinatario.getEndereco(), produtoEntregue);
+        Entrega entrega = new Entrega(destinatario, remetente, produto, destinatario.getEndereco(), remetente.getEndereco(), produtoEntregue);
         entrega.setId(id);
         return entrega;
     }
