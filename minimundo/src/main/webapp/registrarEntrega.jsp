@@ -21,9 +21,10 @@
 				</c:forEach>
 			</select>
 		</p>
+		<p>Quantidade comprada: <input type="number" name="quantidadeComprada"/></p>
 		Produto Entregue?             
 		<input type="radio" value="true" name="produtoEntregue"/>Sim
-		<input type="radio" value="false" name="produtoEntregue"/>Não
+		<input checked type="radio" value="false" name="produtoEntregue"/>Não
 		
 		<p><input type="submit" value="Enviar"/></p>
 		

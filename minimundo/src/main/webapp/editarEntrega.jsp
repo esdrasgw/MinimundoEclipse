@@ -20,10 +20,18 @@
 				</c:forEach>
 			</select>
 		</p>
+		<p>Quantidade comprada: <input type="number" name="quantidadeComprada" value="${entrega.quantidadeComprada}"/></p>
 		Produto Entregue?
-		<input type="radio" value="true" name="produtoEntregue"/>Sim
-		<input type="radio" value="false" name="produtoEntregue"/>Não
-		
+		<c:choose>
+			<c:when test="${entrega.produtoEntregue == true}">
+				<input checked type="radio" value="true" name="produtoEntregue"/>Sim
+				<input type="radio" value="false" name="produtoEntregue"/>Não
+			</c:when>
+			<c:otherwise>
+				<input type="radio" value="true" name="produtoEntregue"/>Sim
+				<input checked type="radio" value="false" name="produtoEntregue"/>Não
+			</c:otherwise>
+		</c:choose>
 		<p><input type="submit" value="Enviar"/></p>
 		
 		<input type="hidden" name="id" value="${entrega.id}" />

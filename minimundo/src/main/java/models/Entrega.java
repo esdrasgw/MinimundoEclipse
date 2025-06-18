@@ -5,17 +5,27 @@ public class Entrega extends Entidade {
 	Cliente destinatario;
 	Cliente remetente;
 	Produto produto;
+	int quantidadeComprada;
 	Endereco enderecoEntrega;
 	Endereco enderecoRemetente;
 	boolean produtoEntregue;
 	
-	public Entrega(Cliente destinatario, Cliente remetente, Produto produto, Endereco enderecoEntrega, Endereco enderecoRemetente, boolean produtoEntregue) {
+	public Entrega(Cliente destinatario, Cliente remetente, Produto produto, int quantidadeComprada, Endereco enderecoEntrega, Endereco enderecoRemetente, boolean produtoEntregue) {
 		this.destinatario = destinatario;
 		this.remetente = remetente;
 		this.produto = produto;
+		this.quantidadeComprada = quantidadeComprada;
 		this.enderecoEntrega = enderecoEntrega;
 		this.enderecoRemetente = enderecoRemetente;
 		this.produtoEntregue = produtoEntregue;
+	}
+	
+	public int getQuantidadeComprada() {
+		return quantidadeComprada;
+	}
+	
+	public void setQuantidadeComprada(int quantidadeComprada) {
+		this.quantidadeComprada = quantidadeComprada;
 	}
 
 	public boolean getProdutoEntregue() {

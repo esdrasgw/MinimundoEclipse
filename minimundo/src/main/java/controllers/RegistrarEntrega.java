@@ -53,6 +53,7 @@ public class RegistrarEntrega extends HttpServlet {
 			if (destinatarioCpfCnpj.equals(remetenteCpfCnpj)) throw new IllegalArgumentException("Cpfs ou Cnpjs do destinatario e do remetente são iguais");
 
 			int produtoId = Integer.parseInt(request.getParameter("produto"));
+			int quantidadeComprada = Integer.parseInt(request.getParameter("quantidadeComprada"));
 			boolean produtoEntregue = Boolean.parseBoolean(request.getParameter("produtoEntregue"));
 			
 			EntidadeDAO<Cliente> dao = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
@@ -69,7 +70,12 @@ public class RegistrarEntrega extends HttpServlet {
 			Endereco enderecoRemetente = remetente.getEndereco();
 			Produto produto = produtoDAO.findById(con, produtoId);
 			
-			Entrega entrega = new Entrega(destinatario, remetente, produto, enderecoEntrega, enderecoRemetente, produtoEntregue);
+			if (produto.getEstoque() >= quantidadeComprada) produto.setEstoque(produto.getEstoque() - quantidadeComprada);
+			else throw new IllegalArgumentException("quantidade maior que estoque");
+			
+			produtoDAO.update(con, produto.getIdProduto(), produto);
+			
+			Entrega entrega = new Entrega(destinatario, remetente, produto, quantidadeComprada, enderecoEntrega, enderecoRemetente, produtoEntregue);
 			
 			entregaDAO.insert(con, entrega);
 			
@@ -104,10 +110,17 @@ public class RegistrarEntrega extends HttpServlet {
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
         		
         		rd.forward(request, response);
+        		
+			} else if (e.getMessage().contains("quantidade maior que estoque")) {
+				
+				request.setAttribute("mensagemErro", "A quantidade inserida é maior do que o estoque do produto");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);
 				
 			} else if (e.getMessage().contains("string")) {
         		
-        		request.setAttribute("mensagemErro", "Os campos CPF/CNPJ e ID do Produto só aceitam números");
+        		request.setAttribute("mensagemErro", "Os campos CPF/CNPJ e ID do Produto só aceitam números" + e.getMessage());
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
         		
         		rd.forward(request, response);

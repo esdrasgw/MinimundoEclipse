@@ -31,6 +31,7 @@
 			<th>Endereço de Saída do Produto</th>
 			<th>ID Produto</th>
 			<th>Produto</th>
+			<th>Quantidade Comprada</th>
 			<th>Entregue?</th>
 			<th>Editar</th>
 			<th>Deletar</th>
@@ -46,6 +47,7 @@
 				<td>${entrega.enderecoRemetente}</td>
 				<td>${entrega.produto.idProduto}</td>
 				<td>${entrega.produto.nome}</td>
+				<td>${entrega.quantidadeComprada}</td>
 				<c:choose>
 					<c:when test="${entrega.produtoEntregue == true}">
 						<td>Sim</td>

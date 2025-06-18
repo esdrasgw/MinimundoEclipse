@@ -51,6 +51,7 @@ public class EditarEntrega extends HttpServlet {
 			String destinatarioCpfCnpj = request.getParameter("destinatario");
 			String remetenteCpfCnpj = request.getParameter("remetente");
 			int produtoId = Integer.parseInt(request.getParameter("produto"));
+			int quantidadeComprada = Integer.parseInt(request.getParameter("quantidadeComprada"));
 			boolean produtoEntregue = Boolean.parseBoolean(request.getParameter("produtoEntregue"));
 			
 			EntidadeDAO<Cliente> dao = DAOFactory.getDAO(EntidadeTipo.CLIENTE);
@@ -66,9 +67,20 @@ public class EditarEntrega extends HttpServlet {
 			Cliente remetente = clienteDAO.findByCpfCnpj(con, remetenteCpfCnpj);
 			Endereco enderecoEntrega = destinatario.getEndereco();
 			Endereco enderecoRemetente = remetente.getEndereco();
+			Entrega entregaOld = entregaDAO.findById(con, idEntrega);
 			Produto produto = produtoDAO.findById(con, produtoId);
-						
-			Entrega entregaUpdate = new Entrega(destinatario, remetente, produto, enderecoEntrega, enderecoRemetente, produtoEntregue);
+			System.out.println(produto.getEstoque());
+
+			produto.setEstoque(produto.getEstoque() + entregaOld.getQuantidadeComprada());
+			
+			System.out.println(produto.getEstoque());
+			
+			if (produto.getEstoque() >= quantidadeComprada) produto.setEstoque(produto.getEstoque() - quantidadeComprada);
+			else throw new IllegalArgumentException("quantidade maior que estoque");
+			
+			produtoDAO.update(con, produto.getIdProduto(), produto);
+			
+			Entrega entregaUpdate = new Entrega(destinatario, remetente, produto, quantidadeComprada, enderecoEntrega, enderecoRemetente, produtoEntregue);
 			entregaUpdate.setId(idEntrega);
 			
 			entregaDAO.update(con, idEntrega, entregaUpdate);
@@ -103,6 +115,13 @@ public class EditarEntrega extends HttpServlet {
 			} else if (e.getMessage().contains("string")) {
         		
         		request.setAttribute("mensagemErro", "Os campos CPF/CNPJ e ID do Produto só aceitam números");
+        		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
+        		
+        		rd.forward(request, response);
+        		
+			} else if (e.getMessage().contains("quantidade maior que estoque")) {
+				
+				request.setAttribute("mensagemErro", "A quantidade inserida é maior do que o estoque do produto");
         		RequestDispatcher rd = request.getRequestDispatcher("/erro.jsp");
         		
         		rd.forward(request, response);
